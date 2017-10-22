@@ -53,6 +53,7 @@ class PostTableViewCell: UITableViewCell {
         
         // 全コメントをラベルに設定 ★
         var all_comments = ""
+        print("DEBUG_PRINT: \(postData.commentsName.count)")
         for idx in 0..<postData.comments.count {
             all_comments += "\(postData.commentsName[idx]) : \(postData.comments[idx])\n"
         }

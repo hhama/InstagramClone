@@ -7,14 +7,36 @@
 //
 
 import UIKit
+import Firebase
+import FirebaseAuth
+import FirebaseDatabase
 
 class CommentViewController: UIViewController {
+    
+    var postData: PostData?
     
     @IBOutlet weak var commentTextView: UITextView!
     
     @IBAction func commentButton(_ sender: Any) {
         print("DEBUG_PRINT: コメント投稿ボタンがタップされました。")
-        print("DEBUG_PRINT: \(self.commentTextView.text)")
+
+        // コメントとコメントした人の名前をFirebaseに保存する
+        if let comment = commentTextView.text {
+            postData?.comments.append(comment)
+            let name = Auth.auth().currentUser?.displayName
+            postData?.commentsName.append(name!)
+        
+            let postRef = Database.database().reference().child(Const.PostPath).child((postData?.id!)!)
+
+            let comments = ["comments": postData?.comments]
+            postRef.updateChildValues(comments)
+
+            let commentsName = ["commentsName": postData?.commentsName]
+            postRef.updateChildValues(commentsName)
+        }
+
+        // 画面を閉じる
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func cancelCommentButton(_ sender: Any) {
@@ -29,6 +51,8 @@ class CommentViewController: UIViewController {
         commentTextView.layer.borderColor = color
         commentTextView.layer.borderWidth = 0.5
         commentTextView.layer.cornerRadius = 5
+        
+        // print("DEBUG_PRINT: \(String(describing: postData?.caption))")
     }
 
     override func didReceiveMemoryWarning() {
